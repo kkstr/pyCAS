@@ -59,7 +59,7 @@ def main():
     elif selection == '2':
         calculus()
     elif selection == '3':
-        solve()
+        algebra()
     elif selection == '4':
         advanced()
     elif selection == '5':
