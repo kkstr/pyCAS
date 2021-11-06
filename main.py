@@ -84,9 +84,7 @@ class pyCAS:
 
 def exit():
     print('Goodbye!')
-    exit
-    clearConsole()
-    return exit()
+    quit
 
 def clearConsole():
     os.system('cls' if os.name == 'nt' else 'clear')
