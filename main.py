@@ -2,17 +2,74 @@
 from sympy.core.function import Function, UndefinedFunction
 import sympy
 import os
-import math
 from sympy import *
 from sympy.functions.elementary.piecewise import Undefined
 from sympy.printing.latex import LatexPrinter
-import multiprocessing
+from itertools import zip_longest
+import numpy as np
 
 temp = 'WIP'
 
 x, y, z, t, = symbols('x y z t')
 
-# core functions
+# core functions and classes
+
+class Polynomial:
+    def __init__(self, *coefficients):
+        """ input: coefficients are in the form a_n, ...a_1, a_0 
+        """
+        self.coefficients = list(coefficients) # tuple to list
+    def __repr__(self):
+        """
+        method to return the canonical string representation 
+        of a polynomial.
+   
+        """
+        return "Polynomial" + str(self.coefficients)
+    def __call__(self, x):    
+        res = 0
+        for coeff in self.coefficients:
+            res = res * x + coeff
+        return res 
+    def degree(self):
+        return len(self.coefficients)   
+    def __add__(self, other):
+        c1 = self.coefficients[::-1]
+        c2 = other.coefficients[::-1]
+        res = [sum(t) for t in zip_longest(c1, c2, fillvalue=0)]
+        return Polynomial(*res)
+    def __sub__(self, other):
+        c1 = self.coefficients[::-1]
+        c2 = other.coefficients[::-1]
+        res = [t1-t2 for t1, t2 in zip_longest(c1, c2, fillvalue=0)]
+        return Polynomial(*res)
+    def derivative(self):
+        derived_coeffs = []
+        exponent = len(self.coefficients) - 1
+        for i in range(len(self.coefficients)-1):
+            derived_coeffs.append(self.coefficients[i] * exponent)
+            exponent -= 1
+        return Polynomial(*derived_coeffs)
+    def __str__(self):
+        def x_expr(degree):
+            if degree == 0:
+                res = ""
+            elif degree == 1:
+                res = "x"
+            else:
+                res = "x^"+str(degree)
+            return res
+        degree = len(self.coefficients) - 1
+        res = ""
+        for i in range(0, degree+1):
+            coeff = self.coefficients[i]
+            # remove 0 coeff
+            if abs(coeff) == 1 and i < degree:
+                #get rid of useless 1x
+                res += f"{'+' if coeff>0 else '-'}{x_expr(degree-i)}"  
+            elif coeff != 0:
+                res += f"{coeff:+g}{x_expr(degree-i)}" 
+        return res.lstrip('+')    # remove the +
 
 class latex_printer(LatexPrinter):
     def _print_Derivative(self, expr):
@@ -45,7 +102,7 @@ def main():
     print('1. Polynomials')
     print('2. Calculus')
     print('3. Solve')
-    print('4. Combinatorics')
+    print('4. Advanced')
     print('5. Matrices')
     print('6. Geometry')
     print('7. Statistics')
@@ -80,7 +137,7 @@ def main():
         print('Invalid input!')
         main()
 
-# sub menus/framework
+# menus/framework
 
 def polynomials():
     clearConsole()
@@ -91,9 +148,23 @@ def polynomials():
     print('3. Expansion')
     print('4. Solving')
     print('5. Back')
-    selection = input('Please enter a number: ')
+    selection = input('Please enter a number: ') # needs to be printed in latex
     if selection == '1':
-        e = input('Polynomial: ')
+        clearConsole()
+        p = Polynomial(3, 2, 12, 1, 6)
+        p2 = Polynomial(1, 2, 3)
+        p_der = p.derivative()
+        X = np.linspace(-2, 3, 50, endpoint=True)
+        print("Polynomial 1:", p)
+        print("Polynomial 2:", p2)
+        print("Derivative of Polynomial 1:", p_der)
+        p3 = p + p2
+        print("Sum of Polynomial 1 + Polynomial 2:", p3)
+        rerun = input("\n Rerun to Polynomials? (Y/N)")
+        if rerun == 'y' or rerun == 'Y':
+            polynomials()
+        else:
+            main()
     elif selection == '2':
         factor(input("Factor Polynomial: "))
     elif selection == '3':
