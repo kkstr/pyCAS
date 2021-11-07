@@ -1,4 +1,5 @@
 # preamble
+
 from sympy.core.function import Function, UndefinedFunction
 import sympy
 import os
@@ -25,7 +26,7 @@ class Polynomial:
         of a polynomial.
    
         """
-        return "Polynomial" + str(self.coefficients)
+        return f"Polynomial {str(self.coefficients)}"
     def __call__(self, x):    
         res = 0
         for coeff in self.coefficients:
@@ -71,6 +72,13 @@ class Polynomial:
                 res += f"{coeff:+g}{x_expr(degree-i)}" 
         return res.lstrip('+')    # remove the +
 
+def sympy_format():
+    raw = (1,4,3,2)
+    raw.split('+')
+
+
+
+
 class latex_printer(LatexPrinter):
     def _print_Derivative(self, expr):
         function, *variables = expr.args
@@ -95,7 +103,7 @@ pyCASv = pyCAS('v.0.1')
 
 def main():
     clearConsole()
-    print('Welcome to pyCAS! Version: ' + pyCAS.version)
+    print(f'Welcome to pyCAS! Version: {pyCASv}')
     print('Please select a topic:')
     print('1. Polynomials')
     print('2. Calculus')
@@ -158,7 +166,7 @@ def polynomials():
         print("Derivative of Polynomial 1:", p_der)
         p3 = p + p2
         print("Sum of Polynomial 1 + Polynomial 2:", p3)
-        rerun = input("\n Rerun to Polynomials? (Y/N)")
+        rerun = input("\n Rerun to Polynomials? (Y/N) >")
         if rerun == 'y' or rerun == 'Y':
             polynomials()
         else:
@@ -183,11 +191,19 @@ def calculus():
     print('1. Derivative')
     print('2. Integration')
     print('3. Taylor (Laurent) series')
-    print('4. Differential Equations Solver')
+    print('4. Differential Equations Solver')   
     print('5. Back')
     selection = input('Please enter a number: ')
     if selection == '1':
         print('Derivative Function')
+        p = Polynomial(1,2,3,4)
+        p_der = p.derivative()
+        print(f"The derivative of the polynomial is: {p_der}")
+        rerun = input("\n Rerun to Calculus? (Y/N) >")
+        if rerun == 'y' or rerun == 'Y':
+            calculus()
+        else:
+            main()
     elif selection == '2':
         print('Integration Function')
     elif selection == '3':
@@ -221,7 +237,7 @@ def algebra():
         print('Invalid input!')
         algebra()
 
-
+1
 def advanced():
     clearConsole()
     print('Advanced Mathematics')
